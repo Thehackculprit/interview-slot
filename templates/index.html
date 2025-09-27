@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Slots</title>
+<style>
+body {font-family:Arial; max-width:800px; margin:20px auto;}
+h2 {text-align:center;}
+table {width:100%; border-collapse:collapse; margin-top:20px;}
+th, td {padding:10px; border:1px solid #ddd;}
+th {background:#f8f9fa;}
+button {padding:6px 10px; border:none; border-radius:4px; background:#3498db; color:white; cursor:pointer;}
+</style>
+</head>
+<body>
+<h2>Available Interview Slots</h2>
+{% if slots %}
+<table>
+<tr>
+<th>Date</th><th>Time</th><th>Status</th><th>Book</th>
+</tr>
+{% for slot in slots %}
+<tr>
+<td>{{ slot["date"] }}</td>
+<td>{{ slot["time"] }}</td>
+<td>{% if slot["is booked"] %}BOOKED{% else %}AVAILABLE{% endif %}</td>
+<td>
+{% if not slot["is booked"] %}
+<form method="POST" action="/book/{{ slot['id'] }}">
+<input type="text" name="name" placeholder="Name" required>
+<input type="email" name="email" placeholder="Email" required>
+<input type="text" name="phone" placeholder="Phone" required>
+<button type="submit">Book</button>
+</form>
+{% else %}-{% endif %}
+</td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<p>No slots available yet.</p>
+{% endif %}
+</body>
+</html>
