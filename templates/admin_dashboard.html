@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard - Interview Booking</title>
+<style>
+body {font-family: Arial; max-width: 1200px; margin:20px auto; background:#f5f5f5;}
+.header {display:flex; justify-content:space-between; align-items:center; background:#2c3e50; color:white; padding:20px; border-radius:8px; margin-bottom:20px;}
+.header a {text-decoration:none; color:white; padding:10px 20px; border-radius:4px; background:#e74c3c;}
+.add-slot, .slots-table {background:white; padding:20px; border-radius:8px; margin-bottom:20px;}
+.form-group {margin-bottom:10px;}
+input {padding:8px; border:1px solid #ddd; border-radius:4px;}
+button {padding:8px 12px; border:none; border-radius:4px; cursor:pointer;}
+button.add {background:#27ae60; color:white;}
+button.delete {background:#e74c3c; color:white;}
+.status-booked {color:#e74c3c; font-weight:bold;}
+.status-available {color:#27ae60; font-weight:bold;}
+table {width:100%; border-collapse:collapse;}
+th, td {padding:10px; border-bottom:1px solid #ddd;}
+th {background:#f8f9fa;}
+</style>
+</head>
+<body>
+
+<div class="header">
+<h1>Admin Dashboard</h1>
+<a href="/admin/logout">Logout</a>
+</div>
+
+<div class="add-slot">
+<h3>Add New Slot</h3>
+<form method="POST" action="/admin/add_slot">
+<div class="form-group">
+<label>Date:</label>
+<input type="date" name="date" required>
+</div>
+<div class="form-group">
+<label>Time:</label>
+<input type="time" name="time" required>
+</div>
+<button class="add" type="submit">Add Slot</button>
+</form>
+</div>
+
+<div class="slots-table">
+<h3>All Interview Slots</h3>
+{% if slots %}
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Time</th>
+<th>Status</th>
+<th>Candidate Name</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody>
+{% for slot in slots %}
+<tr>
+<td>{{ slot["date"] }}</td>
+<td>{{ slot["time"] }}</td>
+<td>{% if slot["is booked"] %}<span class="status-booked">BOOKED</span>{% else %}<span class="status-available">AVAILABLE</span>{% endif %}</td>
+<td>{{ slot["candidate name"] or '-' }}</td>
+<td>{{ slot["candidate email"] or '-' }}</td>
+<td>{{ slot["candidate phone"] or '-' }}</td>
+<td>
+<form method="POST" action="/admin/delete_slot/{{ slot['id'] }}" onsubmit="return confirm('Delete this slot?')">
+<button class="delete" type="submit">Delete</button>
+</form>
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% else %}
+<p>No slots yet. Add one above.</p>
+{% endif %}
+</div>
+
+</body>
+</html>
