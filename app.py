@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import os
+import json
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
@@ -11,8 +13,14 @@ app.secret_key = "supersecretkey"
 def get_sheet():
     scope = ["https://spreadsheets.google.com/feeds",
              "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+
+    # Read the JSON credentials directly from secrets (Render env variable)
+    creds_json = os.environ["GOOGLE_CREDS"]   # Full JSON string pasted in secrets
+    creds_dict = json.loads(creds_json)
+
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
+
     sheet = client.open("booking slots").sheet1
     return sheet
 
